@@ -3,7 +3,6 @@
 import time
 import sys
 import json
-import paramiko
 
 from transports.ssh_transport import SSHTransport
 from transports.mysql_transport import MySqlTransport
@@ -31,19 +30,22 @@ def get_transport(name: str, **kwargs):
     glob_config = get_config()
     transp_conf = glob_config['transports'].get(name, None)
     if transp_conf is None:
-        raise UnknownTransport
+        raise UnknownTransportError('"{}" transport was not found in config file'.format(name))
 
     conf = dict(host=glob_config['host'])
     conf.update(transp_conf)
     conf.update(**kwargs)
     transport = transp_classes.get(name, None)
     if transport is None:
-        raise UnknownTransport
+        raise UnknownTransportError('Can not find a class for "{}" transport'.format(name))
     return transport(**conf)
 
 
 def main_func():
-    print(get_transport('SSD'))
+    ssh_client = get_transport('SSH')
+    a = ssh_client.exec('cat ../etc/lsb-release')
+    b = ssh_client.get_file('../etc/lsb-release')
+    print(a==b)
 
 
 if __name__ == '__main__':

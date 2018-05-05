@@ -1,7 +1,7 @@
 # coding: utf-8
 
 
-class UnknownTransport(Exception):
+class UnknownTransportError(Exception):
     pass
 
 class TransportError(Exception):
