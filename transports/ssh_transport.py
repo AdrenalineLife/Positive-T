@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import time
 import paramiko
 
 from exceptions import TransportError, TransportConnectionError
@@ -15,12 +14,13 @@ class SSHTransport(paramiko.SSHClient):
                      username=login,
                      password=password)
 
-    def exec(self, command: str, **kwargs):
+    def exec(self, command: str, **kwargs) -> str:
         stdin, stdout, stderr = self.exec_command(command, **kwargs)
         err = stderr.read().decode()
         stderr.close()
         if err:
             raise TransportError(err)
+
         resp = stdout.read().decode()
         stdout.close()
         return resp
